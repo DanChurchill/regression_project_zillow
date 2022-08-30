@@ -12,7 +12,7 @@ def get_connection(db, user=env.user, host=env.host, password=env.password):
 
     Returns an url as a string  
     '''
-        return f'mysql+pymysql://{user}:{password}@{host}/{db}'
+    return f'mysql+pymysql://{user}:{password}@{host}/{db}'
 
 
 def get_zillow():
@@ -49,4 +49,4 @@ def get_zillow():
 
     # Write that dataframe to disk for later. This cached file will prevent repeated large queries to the database server.
         df.to_csv(filename, index=False)
-        return df
+    return df
