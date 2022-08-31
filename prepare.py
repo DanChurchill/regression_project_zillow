@@ -16,7 +16,7 @@ def prep_zillow(df):
     df = df[df.transactiondate < '2018-01-01']
 
     # create column with fips value converted from an integer to the county name string
-    df.county_name = df.county.map({6037 : 'Los Angelos', 6059 : 'Orange', 6111 : 'Ventura'})
+    df['county_name'] = df.county.map({6037 : 'Los Angelos', 6059 : 'Orange', 6111 : 'Ventura'})
 
     # convert poolcnt nulls to 0's
     df.poolcnt = df.poolcnt.fillna(0)
