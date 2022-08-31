@@ -37,7 +37,7 @@ def get_zillow():
     # and write it as csv locally for future use 
         df = pd.read_sql('''
                 SELECT parcelid, bathroomcnt, bedroomcnt, calculatedfinishedsquarefeet as sqft, fips as county, fireplacecnt,
-                       garagecarcnt, hashottuborspa, lotsizesquarefeet, poolcnt, unitcnt, yearbuilt, taxdelinquencyflag, 
+                       garagecarcnt, hashottuborspa, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, 
                        logerror, transactiondate, propertylandusedesc, taxvaluedollarcnt as tax_value
                 FROM properties_2017
                 JOIN predictions_2017
@@ -76,9 +76,6 @@ def prep_zillow(df):
 
     # garage null values to 0
     df.garagecarcnt = df.garagecarcnt.fillna(0)
-
-    # hottub/spa nulls to 0
-    df.hashottuborspa = df.hashottuborspa.fillna(0)
 
     # has pool nulls to 0
     df.poolcnt = df.poolcnt.fillna(0)
