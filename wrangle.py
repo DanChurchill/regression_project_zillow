@@ -37,8 +37,8 @@ def get_zillow():
     # and write it as csv locally for future use 
         df = pd.read_sql('''
                 SELECT parcelid, bathroomcnt, bedroomcnt, calculatedfinishedsquarefeet as sqft, fips as county, fireplacecnt,
-                       garagecarcnt, hashottuborspa, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, 
-                       logerror, transactiondate, propertylandusedesc, taxvaluedollarcnt as tax_value
+                       garagecarcnt, hashottuborspa, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, poolcnt,
+                       logerror, transactiondate, propertylandusedesc, rawcensustractandblock, taxvaluedollarcnt as tax_value
                 FROM properties_2017
                 JOIN predictions_2017
                 USING (parcelid)
@@ -68,8 +68,16 @@ def prep_zillow(df):
     # create column with fips value converted from an integer to the county name string
     df['county'] = df.county.map({6037 : 'Los Angelos', 6059 : 'Orange', 6111 : 'Ventura'})
 
+    # remove county and decimal portion of census tract and block
+    df.rename(columns={'rawcensustractandblock' : 'tract'}, inplace=True)
+    df.tract = df.tract.astype(str).str[4:8]
+    df.tract = df.tract.astype(int)
+
     # convert poolcnt nulls to 0's
     df.poolcnt = df.poolcnt.fillna(0)
+
+    # convert has hottub or spa to 0's
+    df.hashottuborspa = df.hashottuborspa.fillna(0)
 
     # convert fireplace count nulls to 0
     df.fireplacecnt = df.fireplacecnt.fillna(0)
@@ -94,6 +102,7 @@ def prep_zillow(df):
 
     return df
 
+    
 def remove_outliers(df, k, col_list):
     ''' remove outliers from a list of columns in a dataframe 
         and return that dataframe
@@ -101,20 +110,19 @@ def remove_outliers(df, k, col_list):
     
     for col in col_list:
 
-        q1, q3 = df[col].quantile([.17, .83]) # get range
+        q1, q3 = df[col].quantile([.13, .87]) # get range
         
         iqr = q3 - q1   # calculate interquartile range
         
         upper_bound = q3 + k * iqr   # get upper bound
         lower_bound = q1 - k * iqr   # get lower bound
 
-        # drop remaining rows with null values 
-        df = df.dropna()
-        
-        # return dataframe without outliers
-        
         df = df[(df[col] > lower_bound) & (df[col] < upper_bound)]
-        
+
+    # drop remaining rows with null values 
+    df = df.dropna()
+    
+    # return dataframe without outliers
     return df
 
 def my_split(df):
