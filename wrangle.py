@@ -37,7 +37,7 @@ def get_zillow():
     # and write it as csv locally for future use 
         df = pd.read_sql('''
                 SELECT parcelid, bathroomcnt, bedroomcnt, calculatedfinishedsquarefeet as sqft, fips as county, fireplacecnt,
-                       garagecarcnt, hashottuborspa, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, poolcnt,
+                       garagecarcnt, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, poolcnt,
                        logerror, transactiondate, propertylandusedesc, rawcensustractandblock, taxvaluedollarcnt as tax_value
                 FROM properties_2017
                 JOIN predictions_2017
@@ -66,7 +66,7 @@ def prep_zillow(df):
     df = df[df.transactiondate < '2018-01-01']
 
     # create column with fips value converted from an integer to the county name string
-    df['county'] = df.county.map({6037 : 'Los Angelos', 6059 : 'Orange', 6111 : 'Ventura'})
+    df['county'] = df.county.map({6037 : 'Los Angeles', 6059 : 'Orange', 6111 : 'Ventura'})
 
     # remove county and decimal portion of census tract and block
     df.rename(columns={'rawcensustractandblock' : 'tract'}, inplace=True)
@@ -76,17 +76,11 @@ def prep_zillow(df):
     # convert poolcnt nulls to 0's
     df.poolcnt = df.poolcnt.fillna(0)
 
-    # convert has hottub or spa to 0's
-    df.hashottuborspa = df.hashottuborspa.fillna(0)
-
     # convert fireplace count nulls to 0
     df.fireplacecnt = df.fireplacecnt.fillna(0)
 
     # garage null values to 0
     df.garagecarcnt = df.garagecarcnt.fillna(0)
-
-    # has pool nulls to 0
-    df.poolcnt = df.poolcnt.fillna(0)
 
     # drop rows where unit count is 2 or 3 (incorrectly coded as single family) then drop column
     df = df[(df.unitcnt != 2) & (df.unitcnt != 3)]
@@ -94,12 +88,14 @@ def prep_zillow(df):
 
     # drop rows where tax delinquency exists as these will have values that don't fit the model, then delete columns
     df = df[df.taxdelinquencyflag != 'Y']
-    df.drop(columns=['taxdelinquencyflag'], inplace=True)
+    df.drop(columns=['propertylandusedesc', 'transactiondate','taxdelinquencyflag'], inplace=True)
 
-    df.drop(columns=['propertylandusedesc', 'transactiondate'], inplace=True)
+    # rename columns for clarity
+    df.rename(columns={'bathroomcnt' : 'bathrooms', 'bedroomcnt' : 'bedrooms', 'lotsizesquarefeet' : 'lotsize'}, inplace=True)
 
-   
-
+    # one-hot encode county
+    dummies = pd.get_dummies(df['county'],drop_first=True)
+    df = pd.concat([df, dummies], axis=1)
     return df
 
     
@@ -146,3 +142,10 @@ def my_split(df):
                                           random_state=333)
 
        return train, validate, test
+
+def wrangle_zillow():
+    df = get_zillow()
+    df = prep_zillow(df)
+    col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'yearbuilt', 'tax_value']
+    df = remove_outliers(df, 1.5, col_list)
+    return my_split(df)
