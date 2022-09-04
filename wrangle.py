@@ -148,4 +148,8 @@ def wrangle_zillow():
     df = prep_zillow(df)
     col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'yearbuilt', 'tax_value']
     df = remove_outliers(df, 1.5, col_list)
+
+    # create features
+    df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
+    df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
     return my_split(df)
