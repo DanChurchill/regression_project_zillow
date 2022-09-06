@@ -94,8 +94,16 @@ def prep_zillow(df):
     df.rename(columns={'bathroomcnt' : 'bathrooms', 'bedroomcnt' : 'bedrooms', 'lotsizesquarefeet' : 'lotsize'}, inplace=True)
 
     # one-hot encode county
-    dummies = pd.get_dummies(df['county'],drop_first=True)
+    dummies = pd.get_dummies(df['county'],drop_first=False)
     df = pd.concat([df, dummies], axis=1)
+    
+    #change year to age
+    df['age'] = 2022 - df['yearbuilt'] 
+    df.drop(columns=['yearbuilt'], inplace=True)
+    
+    
+    
+    
     return df
 
     
@@ -117,7 +125,7 @@ def remove_outliers(df, k, col_list):
 
     # drop remaining rows with null values 
     df = df.dropna()
-    
+    df = df[df.tax_value < 1000000]
     # return dataframe without outliers
     return df
 
@@ -146,7 +154,7 @@ def my_split(df):
 def wrangle_zillow():
     df = get_zillow()
     df = prep_zillow(df)
-    col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'yearbuilt', 'tax_value']
+    col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'tax_value']
     df = remove_outliers(df, 1.5, col_list)
 
     # create features
