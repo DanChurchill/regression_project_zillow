@@ -37,7 +37,7 @@ def get_zillow():
     # and write it as csv locally for future use 
         df = pd.read_sql('''
                 SELECT parcelid, bathroomcnt, bedroomcnt, calculatedfinishedsquarefeet as sqft, fips as county, fireplacecnt,
-                       garagecarcnt, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, poolcnt,
+                       garagecarcnt, lotsizesquarefeet, unitcnt, yearbuilt, taxdelinquencyflag, poolcnt, latitude / 1000000 as lat, longitude / 1000000 as longi,
                        logerror, transactiondate, propertylandusedesc, rawcensustractandblock, taxvaluedollarcnt as tax_value
                 FROM properties_2017
                 JOIN predictions_2017
@@ -96,13 +96,15 @@ def prep_zillow(df):
     # one-hot encode county
     dummies = pd.get_dummies(df['county'],drop_first=False)
     df = pd.concat([df, dummies], axis=1)
+
+
     
     #change year to age
     df['age'] = 2022 - df['yearbuilt'] 
     df.drop(columns=['yearbuilt'], inplace=True)
     
-    
-    
+    #rename longi to long
+    df.rename(columns={'longi' : 'long'}, inplace=True)
     
     return df
 
@@ -160,4 +162,7 @@ def wrangle_zillow():
     # create features
     df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
     df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
+
+
+
     return my_split(df)
