@@ -162,7 +162,7 @@ def wrangle_zillow():
     # create features
     df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
     df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
-
+    df['3plusBR'] = np.where(df['bathrooms'] > 3,1,0)
 
 
     return my_split(df)

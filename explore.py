@@ -99,23 +99,26 @@ def manybath_plot(df):
     baseline = df.tax_value.mean()
 
     # display factorplot
-
-    p = sns.factorplot( x="4plusBath", y="tax_value",  data=df, size=5, 
+    p = sns.factorplot( x="4plusBath", y="tax_value",  data=df, size=8, 
                    aspect=2, kind="bar", palette="muted", ci=None,
-                   edgecolor=".2", grid=False)
-    plt.figure(figsize=(24,12))
+                   edgecolor=".2")
 
 
-    
+    plt.yticks([200000,400000,600000],['$200k', '$400k', '$600k'])
+    plt.xticks([0,1],['No', 'Yes'])
     plt.axhline(baseline, label = 'overall average property value', ls='--')
     p.set_ylabels("Property Value")
     p.set_xlabels("Has more than Three Bathrooms")
     plt.title('Do Lots of Bathrooms affect Tax Value?')
     plt.show()
     # output values for each subset
-    print('Average property value of properties with more than three bathrooms ', "${:,}".format(round(yes)))
+    print('Average property value of properties with more than three bathrooms', "${:,}".format(round(yes)))
     print('Average property value of properties with less than three bathrooms', "${:,}".format(round(no)))
     print("")
+
+
+
+ 
 
 # Perform Independent T-Test: 2 samples, normal distribution, test variance
 
