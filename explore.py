@@ -6,7 +6,10 @@ import scipy.stats as stats
 
 
 def bath_plot(train):
-
+    ''' 
+    Creates a Boxplot for the number of bathrooms and tax value
+    Accepts a dataframe and creates/displays a plot
+    '''
     plt.figure(figsize=(24,12))
     plt.title('Tax value and Number of Bathrooms')
     plt.grid(False)
@@ -19,6 +22,11 @@ def bath_plot(train):
 
 
 def corr_plot(df):
+    '''
+    Creates a correlation plot for home features
+    Accepts a dataframe and creates/displays a plot
+    
+    '''
     #explore.plot_variable_pairs(train)
     cols = ['bedrooms', 'bathrooms',  'age', 'fireplacecnt', 
             'sqft', 'lotsize', 'tax_value', 'poolcnt']
@@ -31,6 +39,10 @@ def corr_plot(df):
 
 
 def target_dist(df):
+    '''
+    Creates a hist plot to show the distribution of tax_value for properties by county
+    Accepts a dataframe and creates/displays a plot
+    '''
     # Plot Distribution of target variable
     plt.figure(figsize=(24,12))
     sns.set(font_scale=2)
@@ -47,6 +59,7 @@ def target_dist(df):
 def county_plot(df):
     '''
     Function to display a factor plot with the average property value of properties in each county
+    Accpets a dataframe, creates a plot, and prints mean values by county
     '''
     # create subsets of df for each county
     orange = df[df.county == 'Orange']
@@ -74,6 +87,11 @@ def county_plot(df):
     print("")
 
 def county_ANOVA(df):
+    '''
+    Performs Analysis of Variance test for mean property values in 3 counties
+    Accepts a dataframe and prints whether the null hypothesis can be rejected or confirmed
+    
+    '''
     orange = df[df.county == 'Orange']
     ventura = df[df.county == 'Ventura']
     la = df[df.county == 'Los Angeles']
@@ -89,7 +107,8 @@ def county_ANOVA(df):
 def manybath_plot(df):
     '''
     Function to display a factor plot with the values of properties with more or less than 
-    3 bathrooms
+    3 bathrooms.
+    Accepts a dataframe and displays a plot, along with mean property values
     '''
     # create subsets of df for those with/without 3 plus bathrooms
     yes = df[df['4plusBath'] == 1].tax_value.mean()
@@ -124,8 +143,9 @@ def manybath_plot(df):
 
 def manybath_test(df):
     '''
-    function to perform statistical tests to determine the difference in value of properties
+    function to perform an indepentdent 2 sample T-test to determine the difference in value of properties
     having more or less than 3 bathrooms is statistically significant
+    Accepts a dataframe, displays whether the null hypothesis can be rejected or confirme
     '''
 
     # create subsets

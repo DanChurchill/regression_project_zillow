@@ -20,10 +20,9 @@ def get_zillow():
     """
     Retrieve locally cached data .csv file for the zillow dataset
     If no locally cached file is present retrieve the data from the codeup database server
-    Keyword arguments:
-    none
-    Returns:
-    DataFrame
+    Keyword arguments: none
+    Returns: DataFrame
+
     """
     
     filename = "zillow.csv"
@@ -56,7 +55,7 @@ def prep_zillow(df):
     function accepts a dataframe of zillow data and prepares it for use in 
     modelling
     
-    returns a transformed dataframe
+    returns a transformed dataframe with features for exploration and modeling
     '''
 
     # convert transaction column from a string to a date
@@ -97,7 +96,9 @@ def prep_zillow(df):
     dummies = pd.get_dummies(df['county'],drop_first=False)
     df = pd.concat([df, dummies], axis=1)
 
-
+    # one-hot encode # of bedrooms
+    dummies = pd.get_dummies(df['bedrooms'], drop_first=True)
+    df = pd.concat([df, dummies], axis=1)
     
     #change year to age
     df['age'] = 2022 - df['yearbuilt'] 
@@ -105,13 +106,19 @@ def prep_zillow(df):
     
     #rename longi to long
     df.rename(columns={'longi' : 'long'}, inplace=True)
+
+    # create categorical features for large number of bathrooms and large garages
+    df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
+    df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
     
     return df
 
     
-def remove_outliers(df, k, col_list):
+def remove_outliers(df, col_list):
     ''' remove outliers from a list of columns in a dataframe 
-        and return that dataframe
+        accepts a dataframe and a list of columns from which to remove outliers
+
+        returns a dataframe with outliers removed
     '''
     
     for col in col_list:
@@ -120,12 +127,12 @@ def remove_outliers(df, k, col_list):
         
         iqr = q3 - q1   # calculate interquartile range
         
-        upper_bound = q3 + k * iqr   # get upper bound
-        lower_bound = q1 - k * iqr   # get lower bound
+        upper_bound = q3 + 1.5 * iqr   # get upper bound
+        lower_bound = q1 - 1.5 * iqr   # get lower bound
 
         df = df[(df[col] > lower_bound) & (df[col] < upper_bound)]
 
-    # drop remaining rows with null values 
+    # drop remaining rows with null values and large values
     df = df.dropna()
     df = df[df.tax_value < 1000000]
     # return dataframe without outliers
@@ -154,15 +161,9 @@ def my_split(df):
        return train, validate, test
 
 def wrangle_zillow():
-    df = get_zillow()
-    df = prep_zillow(df)
-    col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'tax_value']
-    df = remove_outliers(df, 1.5, col_list)
-
-    # create features
-    df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
-    df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
-    df['3plusBR'] = np.where(df['bathrooms'] > 3,1,0)
-
+    df = get_zillow() # get the data
+    df = prep_zillow(df) # prep the data
+    col_list = ['bathrooms', 'bedrooms', 'sqft', 'lotsize', 'tax_value'] # specify which columns to remove outliers from
+    df = remove_outliers(df,  col_list) # remove outliers
 
     return my_split(df)
