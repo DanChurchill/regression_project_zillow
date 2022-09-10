@@ -24,11 +24,11 @@ ___
 
 
 ## <a name="project_description"></a>Project Description:
-The purpose of this project is to aquire customer data for the Telco Company from a database, create a model to predict customer churn, and utilize that model to make predictions from a group of customers
-
-Goal 1: Create a model that can predict churn with greater accuracy than baseline
-
-Goal 2: Find drivers for customer churn at Telco and make recommendations to improve retention
+The purpose of this project is to create a Regression Model that predicts property tax assessed values of Single Family Properties that were sold in 2017 from a database of Zillow data  
+    
+  Goal 1: Create a model that can predict the tax value better than the baseline rate<br>
+  Goal 2: Find the key drivers of tax value for single family properties<br>
+  Goal 3: Identify where the properties are located
 
 
 [[Back to top](#top)]
@@ -38,15 +38,11 @@ Goal 2: Find drivers for customer churn at Telco and make recommendations to imp
 
 
 ### Project Outline:
-- Acquire data from the Codeup Database using a function saved in an acquire.py file to import into the Final Report Notebook.
-- Perform initial data exploration to determine what preparations the data needs to undergo.
-- Clean and prepare data utilizing a function saved in a prepare.py, and prepare data in Final Report Notebook by importing and using the funtion.
-- Clearly define two hypotheses, set an alpha, run statistical tests needed to reject or fail to reject the Null Hypothesis, and document findings and takeaways.
-- Establish a baseline accuracy.
-- Train three different classification models.
-- Evaluate models on train and validate datasets.
-- Choose the model with that performs the best and evaluate that single model on the test dataset.
-- Create csv file with the customer id, the probability that the customer has churned, and the model's prediction for each observation in my test dataset.
+- Acquire, clean, and prepare data from the Codeup Database using a function saved in a wrangle.py file to import into the Final Report Notebook.
+- Perform initial data exploration to determine what features will be usefull for modeling
+- Establish a baseline RMSE
+- Train three different linear regression models and evaluate on train and validate datasets
+- Choose the model with that performs the best and evaluate that single model on the test dataset
 - Document conclusions, takeaways, and next steps in the Final Report Notebook.
 
 [[Back to top](#top)]
@@ -56,46 +52,41 @@ Goal 2: Find drivers for customer churn at Telco and make recommendations to imp
 
 | Target Attribute | Definition | Data Type |
 | ----- | ----- | ----- |
-| churn | 1 if the customer has churned | int |
+| tax_value | the 2017 assessed tax value of the property | float |
 
 
 ---
 | Feature | Definition | Data Type |
 | ----- | ----- | ----- |
-| customer_id | Unique id for each customer| string |
-| senior_citizen| 1 if customer is a senior citizen | int |
-| tenure | Months of tenure as a customer| int |
-| monthly_charges| The customer's monthly bill| float |
-| total_charges| The customer's total bills since they have been a customer| float|
-| male | 1 if the customer is male | int |
-| partner | 1 if the customer has a partner  | int |
-| dependents | 1 if the customer has dependents | int |
-| phone | 1 if the customer has phone service | int |
-| paperless_billing | 1 if the customer has paperliess billing | int |
-| multiple_lines_yes | 1 if the customer has multiple phone lines | int |
-| online_security_no | 1 if the customer has internet but no online security | int |
-| online_security_yes | 1 if the customer has online security add-on | int |
-| online_backup_no | 1 if the customer has internet but no online backup | int |
-| online_backup_yes | 1 if the customer has online backup | int |
-| device_protection_no | 1 if the customer has internet but no device protection | int |
-| device_protection_yes | 1 if the customer has device protection | int |
-| tech_support_no | 1 if the customer has internet but no tech support | int |
-| tech_support_yes | 1 if the customer has tech_support | int |
-| streaming_tv_no | 1 if the customer has internet but no streaming tv | int |
-| streaming_tv_yes | 1 if the customer has streaming tv | int |
-| streaming_movies_no | 1 if the customer has internet but no streaming movies | int |
-| streaming_movies_yes | 1 if the customer has streaming movies | int |
-| contract_type_month-to-month | 1 if the customer has a month-to-month contract | int |
-| contract_type_one_year | 1 if the customer has a one year contract  | int |
-| contract_type_two_year | 1 if the customer has a two year contract | int |
-| payment_type_bank_transfer_auto | 1 if the customer pays by automatic bank transfer | int
-| payment_type_credit_card_auto | 1 if the customer pays automatically by credit card | int
-| payment_type_electronic_check | 1 if the customer pays manually by electronic check | int
-| payment_type_mailed_check | 1 if the customer pays manually by mailed check | int
-| internet_type_dsl  | 1 if the customer has DSL internet service |  int
-| internet_type_fiber_optic | 1 if the customer has fiber optic internet service | int
-| internet_type_none | 1 if the customer has no internet | int
-| addon_count | sum of how many internet service add-ons the customer has | int
+| parcelid | Unique id for each property| int |
+| bathrooms| The number of bathrooms on the property | float |
+| bedrooms | The number of bedrooms on the property | float |
+| county| The County the property is located in | string |
+| fireplacecnt | The number of fireplaces on the property | float|
+| garagecarcnt | The number of cars that can be held in the garage on the property | float |
+| lotsize | the square footage of the land | float |
+| poolcnt | the number of pools on the property | float |
+| lat | The geographical latitude of the property | float |
+| long | The geographical longitude of the property | float |
+| logerror | the logerror of zillows model, retained for possible future use, but not used in this project | float |
+| tract | the census tract of the property, with the FIPS and decimal portions removed | float |
+| Los Angeles | 1 if the property is in LA County | int |
+| Orange | 1 if the property is in Orange County | int |
+| Ventura | 1 if the property is in Ventura County | int |
+| 1.0 | 1 if the property has one bedroom | int |
+| 2.0 | 1 if the property has two bedrooms | int |
+| 3.0 | 1 if the property has three bedrooms | int |
+| 4.0 | 1 if the property has four bedrooms | int |
+| 5.0 | 1 if the property has five bedrooms | int |
+| 6.0 | 1 if the property has six bedrooms | int |
+| 7.0 | 1 if the property has seven bedrooms | int |
+| 8.0 | 1 if the property has eight bedrooms | int |
+| 9.0 | 1 if the property has nine bedrooms | int |
+| 10.0 | 1 if the property has ten bedrooms | int |
+| 11.0 | 1 if the property has eleven bedrooms | int |
+| age | the age of the property in years | float
+| 4plusBath | 1 if the property has more than three bathrooms | int
+| 3to5garage | 1 if the property's garage has the capacity for 3 to 5 cars | int
 
 [[Back to top](#top)]
 
