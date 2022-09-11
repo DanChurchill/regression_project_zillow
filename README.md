@@ -23,7 +23,7 @@ ___
 
 
 
-## <a name="project_description"></a>Project Description:
+## <a name="project_description"></a>Project Description and Goals:
 The purpose of this project is to create a Regression Model that predicts property tax assessed values of Single Family Properties that were sold in 2017 from a database of Zillow data  
     
   Goal 1: Create a model that can predict the tax value better than the baseline rate<br>
