@@ -77,7 +77,6 @@ def prep_zillow(df):
 
     # convert fireplace count nulls to 0
     df.fireplacecnt = df.fireplacecnt.fillna(0)
-
     # garage null values to 0
     df.garagecarcnt = df.garagecarcnt.fillna(0)
 
@@ -111,6 +110,8 @@ def prep_zillow(df):
     df['4plusBath'] = np.where(df['bathrooms'] > 3,1,0)
     df['3to5garage'] = np.where((df['garagecarcnt'] > 2) & (df['garagecarcnt'] < 6), 1,0)
     
+    # convert columns to ints where possible
+
     return df
 
     
