@@ -189,7 +189,7 @@ There were similar observations in garage size and a similar category was create
 
 - Location was the largest driver of tax value, followed by square footage
 
-- I attempted to create a function that created a dictionary of models trained for each of the most popular FIPS
+- I attempted to create a function that created a dictionary of models trained for each of the most popular tracts
     - Consolidating results and evaluating proved too difficult to implement in the time given
 
 [[Back to top](#top)]
